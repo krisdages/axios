@@ -1,55 +1,57 @@
-describe('promise', function () {
-  beforeEach(function () {
-    jasmine.Ajax.install();
+forEachAdapter('promise', function () {
+beforeEach(function () {
+  jasmine.Ajax.install();
+});
+
+afterEach(function () {
+  jasmine.Ajax.uninstall();
+});
+
+it('should provide succinct object to then', function (done) {
+  let response;
+
+  axios('/foo').then(function (r) {
+    response = r;
   });
 
-  afterEach(function () {
-    jasmine.Ajax.uninstall();
-  });
-
-  it('should provide succinct object to then', function (done) {
-    let response;
-
-    axios('/foo').then(function (r) {
-      response = r;
-    });
-
-    getAjaxRequest().then(function (request) {
-      request.respondWith({
-        status: 200,
-        responseText: '{"hello":"world"}'
-      });
-
-      setTimeout(function () {
-        expect(typeof response).toEqual('object');
-        expect(response.data.hello).toEqual('world');
-        expect(response.status).toEqual(200);
-        expect(response.headers['content-type']).toEqual('application/json');
-        expect(response.config.url).toEqual('/foo');
-        done();
-      }, 100);
-    });
-  });
-
-  it('should support all', function (done) {
-    let fulfilled = false;
-
-    axios.all([true, 123]).then(function () {
-      fulfilled = true;
+  getAjaxRequest().then(function (request) {
+    request.respondWith({
+      status: 200,
+      responseText: '{"hello":"world"}'
     });
 
     setTimeout(function () {
-      expect(fulfilled).toEqual(true);
+      expect(typeof response).toEqual('object');
+      expect(response.data.hello).toEqual('world');
+      expect(response.status).toEqual(200);
+      //if (axios.defaults.adapter !== axios.defaults.allAdapters.fetch) {
+      expect(response.headers['content-type']).toEqual('application/json');
+      //}
+      expect(response.config.url).toEqual('/foo');
       done();
     }, 100);
   });
+});
 
-  it('should support spread', function (done) {
-    let sum = 0;
-    let fulfilled = false;
-    let result;
+it('should support all', function (done) {
+  let fulfilled = false;
 
-    axios
+  axios.all([true, 123]).then(function () {
+    fulfilled = true;
+  });
+
+  setTimeout(function () {
+    expect(fulfilled).toEqual(true);
+    done();
+  }, 100);
+});
+
+it('should support spread', function (done) {
+  let sum = 0;
+  let fulfilled = false;
+  let result;
+
+  axios
       .all([123, 456])
       .then(axios.spread(function (a, b) {
         sum = a + b;
@@ -60,11 +62,11 @@ describe('promise', function () {
         result = res;
       }).catch(done);
 
-    setTimeout(function () {
-      expect(fulfilled).toEqual(true);
-      expect(sum).toEqual(123 + 456);
-      expect(result).toEqual('hello world');
-      done();
-    }, 100);
-  });
+  setTimeout(function () {
+    expect(fulfilled).toEqual(true);
+    expect(sum).toEqual(123 + 456);
+    expect(result).toEqual('hello world');
+    done();
+  }, 100);
+});
 });

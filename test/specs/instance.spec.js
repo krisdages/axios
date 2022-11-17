@@ -1,4 +1,4 @@
-describe('instance', function () {
+forEachAdapter('instance', function (adapter) {
   beforeEach(function () {
     jasmine.Ajax.install();
   });
@@ -70,16 +70,18 @@ describe('instance', function () {
     });
   });
 
-  it('should use instance options', function (done) {
-    const instance = axios.create({ timeout: 1000 });
+  if (adapter !== axios.defaults.allAdapters.fetch) {
+    it('should use instance options', function (done) {
+      const instance = axios.create({ timeout: 1000 });
 
-    instance.get('/foo');
+      instance.get('/foo');
 
-    getAjaxRequest().then(function (request) {
-      expect(request.timeout).toBe(1000);
-      done();
+      getAjaxRequest().then(function (request) {
+        expect(request.timeout).toBe(1000);
+        done();
+      });
     });
-  });
+  }
 
   it('should have defaults.headers', function () {
     const instance = axios.create({
@@ -120,7 +122,7 @@ describe('instance', function () {
     });
   });
 
-  it('should have getUri on the instance', function() {
+  it('should have getUri on the instance', function () {
     const instance = axios.create({
       baseURL: 'https://api.example.com'
     });

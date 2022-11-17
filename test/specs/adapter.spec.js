@@ -27,7 +27,7 @@ describe('adapter', function () {
       }
     }).catch(done);
 
-    getAjaxRequest().then(function(request) {
+    getAjaxRequest().then(function (request) {
       expect(request.url).toBe('/bar');
       done();
     });
@@ -56,7 +56,7 @@ describe('adapter', function () {
 
     asyncFlag = true;
 
-    getAjaxRequest().then(function() {
+    getAjaxRequest().then(function () {
       done();
     });
   });
@@ -90,7 +90,7 @@ describe('adapter', function () {
 
     asyncFlag = true;
 
-    getAjaxRequest().then(function() {
+    getAjaxRequest().then(function () {
       done();
     });
   });

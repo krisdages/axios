@@ -317,6 +317,7 @@ export interface AxiosRequestConfig<D = any> {
     FormData?: new (...args: any[]) => object;
   };
   formSerializer?: FormSerializerOptions;
+  performance?: boolean | Pick<Performance, "now">;
 }
 
 export interface HeadersDefaults {
@@ -335,6 +336,13 @@ export interface HeadersDefaults {
 
 export interface AxiosDefaults<D = any> extends Omit<AxiosRequestConfig<D>, 'headers'> {
   headers: HeadersDefaults;
+
+  readonly allAdapters: {
+    http: AxiosAdapter;
+    xhr: AxiosAdapter;
+    fetch: AxiosAdapter;
+    [name: string]: AxiosAdapter | undefined;
+  };
 }
 
 export interface CreateAxiosDefaults<D = any> extends Omit<AxiosRequestConfig<D>, 'headers'> {
@@ -348,6 +356,12 @@ export interface AxiosResponse<T = any, D = any>  {
   headers: RawAxiosResponseHeaders | AxiosResponseHeaders;
   config: AxiosRequestConfig<D>;
   request?: any;
+  timing?: ResponseTiming;
+}
+
+export interface ResponseTiming {
+  responseStart: number;
+  responseEnd: number;
 }
 
 export class AxiosError<T = unknown, D = any> extends Error {
@@ -427,6 +441,7 @@ export interface AxiosInterceptorManager<V> {
 
 export class Axios {
   constructor(config?: AxiosRequestConfig);
+
   defaults: AxiosDefaults;
   interceptors: {
     request: AxiosInterceptorManager<AxiosRequestConfig>;

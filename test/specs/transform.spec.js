@@ -1,6 +1,5 @@
 import AxiosError from "../../lib/core/AxiosError";
-
-describe('transform', function () {
+forEachAdapter('transform', function () {
   beforeEach(function () {
     jasmine.Ajax.install();
   });
@@ -44,39 +43,39 @@ describe('transform', function () {
   });
 
   it('should throw a SyntaxError if JSON parsing failed and responseType is "json" if silentJSONParsing is false',
-    function (done) {
-      let thrown;
+      function (done) {
+        let thrown;
 
-      axios({
-        url: '/foo',
-        responseType: 'json',
-        transitional: {silentJSONParsing: false}
-      }).then(function () {
-        done(new Error('should fail'));
-      }, function (err) {
-        thrown = err;
-      });
-
-      getAjaxRequest().then(function (request) {
-        request.respondWith({
-          status: 200,
-          responseText: '{foo": "bar"}' // JSON SyntaxError
+        axios({
+          url: '/foo',
+          responseType: 'json',
+          transitional: { silentJSONParsing: false }
+        }).then(function () {
+          done(new Error('should fail'));
+        }, function (err) {
+          thrown = err;
         });
 
-        setTimeout(function () {
-          expect(thrown).toBeTruthy();
-          expect(thrown.name).toContain('SyntaxError');
-          expect(thrown.code).toEqual(AxiosError.ERR_BAD_RESPONSE);
-          done();
-        }, 100);
-      });
-    }
+        getAjaxRequest().then(function (request) {
+          request.respondWith({
+            status: 200,
+            responseText: '{foo": "bar"}' // JSON SyntaxError
+          });
+
+          setTimeout(function () {
+            expect(thrown).toBeTruthy();
+            expect(thrown.name).toContain('SyntaxError');
+            expect(thrown.code).toEqual(AxiosError.ERR_BAD_RESPONSE);
+            done();
+          }, 100);
+        });
+      }
   );
 
   it('should send data as JSON if request content-type is application/json', function (done) {
     let response;
 
-    axios.post('/foo', 123, {headers: {'Content-Type': 'application/json'}}).then(function (_response) {
+    axios.post('/foo', 123, { headers: { 'Content-Type': 'application/json' } }).then(function (_response) {
       response = _response;
     }, function (err) {
       done(err);
@@ -90,7 +89,7 @@ describe('transform', function () {
 
       setTimeout(function () {
         expect(response).toBeTruthy();
-        expect(request.requestHeaders['Content-Type']).toBe('application/json');
+        expect(getRequestHeader(request, 'Content-Type')).toBe('application/json');
         expect(JSON.parse(request.params)).toBe(123);
         done();
       }, 100);
@@ -151,9 +150,9 @@ describe('transform', function () {
 
     axios.post('/foo', data, {
       transformRequest: axios.defaults.transformRequest.concat(
-        function (data) {
-          return data.replace('bar', 'baz');
-        }
+          function (data) {
+            return data.replace('bar', 'baz');
+          }
       )
     });
 
@@ -173,7 +172,7 @@ describe('transform', function () {
     });
 
     getAjaxRequest().then(function (request) {
-      expect(request.requestHeaders['X-Authorization']).toEqual(token);
+      expect(getRequestHeader(request, 'X-Authorization')).toEqual(token);
       done();
     });
   });
@@ -193,7 +192,7 @@ describe('transform', function () {
     });
 
     getAjaxRequest().then(function (request) {
-      expect(request.requestHeaders['Content-Type']).toEqual('application/x-www-form-urlencoded');
+      expect(getRequestHeader(request, 'Content-Type')).toEqual('application/x-www-form-urlencoded');
       done();
     });
   });

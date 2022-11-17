@@ -107,6 +107,7 @@ declare class CanceledError<T> extends AxiosError<T> {
 
 declare class Axios {
   constructor(config?: axios.AxiosRequestConfig);
+
   defaults: axios.AxiosDefaults;
   interceptors: {
     request: axios.AxiosInterceptorManager<axios.AxiosRequestConfig>;
@@ -372,6 +373,7 @@ declare namespace axios {
       FormData?: new (...args: any[]) => object;
     };
     formSerializer?: FormSerializerOptions;
+    performance?: boolean | Pick<Performance, "now">;
   }
 
   interface HeadersDefaults {
@@ -403,6 +405,12 @@ declare namespace axios {
     headers: RawAxiosResponseHeaders | AxiosResponseHeaders;
     config: AxiosRequestConfig<D>;
     request?: any;
+    timing?: ResponseTiming;
+  }
+
+  interface ResponseTiming {
+    responseStart: number;
+    responseEnd: number;
   }
 
   type AxiosPromise<T = any> = Promise<AxiosResponse<T>>;

@@ -1,114 +1,113 @@
 import AxiosHeaders from "../../lib/core/AxiosHeaders.js";
+forEachAdapter('options', function () {
+beforeEach(function () {
+  jasmine.Ajax.install();
+});
 
-describe('options', function () {
-  beforeEach(function () {
-    jasmine.Ajax.install();
+afterEach(function () {
+  jasmine.Ajax.uninstall();
+});
+
+it('should default method to get', function (done) {
+  axios('/foo');
+
+  getAjaxRequest().then(function (request) {
+    expect(request.method).toBe('GET');
+    done();
+  });
+});
+
+it('should accept headers', function (done) {
+  axios('/foo', {
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest'
+    }
   });
 
-  afterEach(function () {
-    jasmine.Ajax.uninstall();
+  getAjaxRequest().then(function (request) {
+    expect(getRequestHeader(request, 'X-Requested-With')).toEqual('XMLHttpRequest');
+    done();
+  });
+});
+
+it('should accept params', function (done) {
+  axios('/foo', {
+    params: {
+      foo: 123,
+      bar: 456
+    }
   });
 
-  it('should default method to get', function (done) {
-    axios('/foo');
+  getAjaxRequest().then(function (request) {
+    expect(request.url).toBe('/foo?foo=123&bar=456');
+    done();
+  });
+});
 
-    getAjaxRequest().then(function (request) {
-      expect(request.method).toBe('GET');
-      done();
-    });
+it('should allow overriding default headers', function (done) {
+  axios('/foo', {
+    headers: {
+      'Accept': 'foo/bar'
+    }
   });
 
-  it('should accept headers', function (done) {
-    axios('/foo', {
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest'
-      }
-    });
+  getAjaxRequest().then(function (request) {
+    expect(getRequestHeader(request, 'Accept')).toEqual('foo/bar');
+    done();
+  });
+});
 
-    getAjaxRequest().then(function (request) {
-      expect(request.requestHeaders['X-Requested-With']).toEqual('XMLHttpRequest');
-      done();
-    });
+it('should accept base URL', function (done) {
+  const instance = axios.create({
+    baseURL: 'http://test.com/'
   });
 
-  it('should accept params', function (done) {
-    axios('/foo', {
-      params: {
-        foo: 123,
-        bar: 456
-      }
-    });
+  instance.get('/foo');
 
-    getAjaxRequest().then(function (request) {
-      expect(request.url).toBe('/foo?foo=123&bar=456');
-      done();
-    });
+  getAjaxRequest().then(function (request) {
+    expect(request.url).toBe('http://test.com/foo');
+    done();
+  });
+});
+
+it('should ignore base URL if request URL is absolute', function (done) {
+  const instance = axios.create({
+    baseURL: 'http://someurl.com/'
   });
 
-  it('should allow overriding default headers', function (done) {
-    axios('/foo', {
-      headers: {
-        'Accept': 'foo/bar'
-      }
-    });
+  instance.get('http://someotherurl.com/');
 
-    getAjaxRequest().then(function (request) {
-      expect(request.requestHeaders['Accept']).toEqual('foo/bar');
-      done();
-    });
+  getAjaxRequest().then(function (request) {
+    expect(request.url).toBe('http://someotherurl.com/');
+    done();
   });
+});
 
-  it('should accept base URL', function (done) {
-    const instance = axios.create({
-      baseURL: 'http://test.com/'
-    });
+it('should change only the baseURL of the specified instance', function () {
+  const instance1 = axios.create();
+  const instance2 = axios.create();
 
-    instance.get('/foo');
+  instance1.defaults.baseURL = 'http://instance1.example.com/';
 
-    getAjaxRequest().then(function (request) {
-      expect(request.url).toBe('http://test.com/foo');
-      done();
-    });
-  });
+  expect(instance2.defaults.baseURL).not.toBe('http://instance1.example.com/');
+});
 
-  it('should ignore base URL if request URL is absolute', function (done) {
-    const instance = axios.create({
-      baseURL: 'http://someurl.com/'
-    });
+it('should change only the headers of the specified instance', function () {
+  const instance1 = axios.create();
+  const instance2 = axios.create();
 
-    instance.get('http://someotherurl.com/');
+  instance1.defaults.headers.common.Authorization = 'faketoken';
+  instance2.defaults.headers.common.Authorization = 'differentfaketoken';
 
-    getAjaxRequest().then(function (request) {
-      expect(request.url).toBe('http://someotherurl.com/');
-      done();
-    });
-  });
+  instance1.defaults.headers.common['Content-Type'] = 'application/xml';
+  instance2.defaults.headers.common['Content-Type'] = 'application/x-www-form-urlencoded';
 
-  it('should change only the baseURL of the specified instance', function() {
-    const instance1 = axios.create();
-    const instance2 = axios.create();
+  expect(axios.defaults.headers.common.Authorization).toBe(undefined);
+  expect(instance1.defaults.headers.common.Authorization).toBe('faketoken');
+  expect(instance2.defaults.headers.common.Authorization).toBe('differentfaketoken');
 
-    instance1.defaults.baseURL = 'http://instance1.example.com/';
-
-    expect(instance2.defaults.baseURL).not.toBe('http://instance1.example.com/');
-  });
-
-  it('should change only the headers of the specified instance', function() {
-    const instance1 = axios.create();
-    const instance2 = axios.create();
-
-    instance1.defaults.headers.common.Authorization = 'faketoken';
-    instance2.defaults.headers.common.Authorization = 'differentfaketoken';
-
-    instance1.defaults.headers.common['Content-Type'] = 'application/xml';
-    instance2.defaults.headers.common['Content-Type'] = 'application/x-www-form-urlencoded';
-
-    expect(axios.defaults.headers.common.Authorization).toBe(undefined);
-    expect(instance1.defaults.headers.common.Authorization).toBe('faketoken');
-    expect(instance2.defaults.headers.common.Authorization).toBe('differentfaketoken');
-
-    expect(axios.defaults.headers.common['Content-Type']).toBe(undefined);
-    expect(instance1.defaults.headers.common['Content-Type']).toBe('application/xml');
-    expect(instance2.defaults.headers.common['Content-Type']).toBe('application/x-www-form-urlencoded');
-  });
+  expect(axios.defaults.headers.common['Content-Type']).toBe(undefined);
+  expect(instance1.defaults.headers.common['Content-Type']).toBe('application/xml');
+  expect(instance2.defaults.headers.common['Content-Type']).toBe('application/x-www-form-urlencoded');
+});
 });

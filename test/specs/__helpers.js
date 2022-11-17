@@ -1,4 +1,7 @@
+import { setup } from './__fetch';
 import _axios from '../../index.js';
+
+setup();
 
 window.axios = _axios;
 
@@ -39,3 +42,26 @@ window.getAjaxRequest = (function () {
 
   return getAjaxRequest;
 })();
+
+window.getRequestHeader = (request, key) => {
+  return request.requestHeaders[key] ?? request.requestHeaders[key.toLowerCase()];
+}
+
+const adapters = [
+    { description: "fetch -", adapter: _axios.defaults.allAdapters.fetch },
+    { description: "XHR -", adapter: _axios.defaults.allAdapters.xhr },
+]
+window.forEachAdapter = (specDescription, fn) => {
+    let originalAdapter = axios.defaults.adapter;
+    for (const { description, adapter } of adapters) {
+      describe(`${description} - ${specDescription}`, function() {
+        beforeEach(function () {
+          axios.defaults.adapter = adapter;
+        });
+        afterEach(function () {
+          axios.defaults.adapter = originalAdapter;
+        });
+        fn(adapter);
+      });
+    }
+}

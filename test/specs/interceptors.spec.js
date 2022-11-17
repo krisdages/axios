@@ -1,4 +1,4 @@
-describe('interceptors', function () {
+forEachAdapter('interceptors', function () {
   beforeEach(function () {
     jasmine.Ajax.install();
   });
@@ -95,6 +95,7 @@ describe('interceptors', function () {
     function onGetCall(config) {
       return config.method === 'get';
     }
+
     axios.interceptors.request.use(function (config) {
       config.headers.test = 'special get headers';
       return config;
@@ -112,6 +113,7 @@ describe('interceptors', function () {
     function onPostCall(config) {
       return config.method === 'post';
     }
+
     axios.interceptors.request.use(function (config) {
       config.headers.test = 'special get headers';
       return config;
@@ -131,6 +133,7 @@ describe('interceptors', function () {
     function onPostCall(config) {
       return config.method === 'post';
     }
+
     axios.interceptors.request.use(function (config) {
       config.headers.test = 'special get headers';
       return config;
@@ -343,7 +346,7 @@ describe('interceptors', function () {
 
       function fireRequestAndExpect(expectation) {
         let response;
-        axios('/foo').then(function(data) {
+        axios('/foo').then(function (data) {
           response = data;
         });
         getAjaxRequest().then(function (request) {
@@ -352,7 +355,7 @@ describe('interceptors', function () {
             responseText: 'OK'
           });
 
-          setTimeout(function() {
+          setTimeout(function () {
             expectation(response)
           }, 100);
         });
@@ -384,10 +387,10 @@ describe('interceptors', function () {
       });
 
       it('then only the last interceptor\'s result is returned', function (done) {
-        axios.interceptors.response.use(function() {
+        axios.interceptors.response.use(function () {
           return 'response 1';
         });
-        axios.interceptors.response.use(function() {
+        axios.interceptors.response.use(function () {
           return 'response 2';
         });
 
@@ -398,10 +401,10 @@ describe('interceptors', function () {
       });
 
       it('then every interceptor receives the result of it\'s predecessor', function (done) {
-        axios.interceptors.response.use(function() {
+        axios.interceptors.response.use(function () {
           return 'response 1';
         });
-        axios.interceptors.response.use(function(response) {
+        axios.interceptors.response.use(function (response) {
           return [response, 'response 2'];
         });
 
@@ -414,7 +417,7 @@ describe('interceptors', function () {
       describe('and when the fulfillment-interceptor throws', function () {
 
         function fireRequestCatchAndExpect(expectation) {
-          axios('/foo').catch(function(data) {
+          axios('/foo').catch(function (data) {
             // dont handle result
           });
           getAjaxRequest().then(function (request) {
@@ -423,14 +426,14 @@ describe('interceptors', function () {
               responseText: 'OK'
             });
 
-            setTimeout(function() {
+            setTimeout(function () {
               expectation()
             }, 100);
           });
         }
 
         it('then the following fulfillment-interceptor is not called', function (done) {
-          axios.interceptors.response.use(function() {
+          axios.interceptors.response.use(function () {
             throw Error('throwing interceptor');
           });
           const interceptor2 = jasmine.createSpy('interceptor2');
@@ -443,10 +446,10 @@ describe('interceptors', function () {
         });
 
         it('then the following rejection-interceptor is called', function (done) {
-          axios.interceptors.response.use(function() {
+          axios.interceptors.response.use(function () {
             throw Error('throwing interceptor');
           });
-          const unusedFulfillInterceptor = function() {};
+          const unusedFulfillInterceptor = function () {};
           const rejectIntercept = jasmine.createSpy('rejectIntercept');
           axios.interceptors.response.use(unusedFulfillInterceptor, rejectIntercept);
 
@@ -457,12 +460,12 @@ describe('interceptors', function () {
         });
 
         it('once caught, another following fulfill-interceptor is called again (just like in a promise chain)', function (done) {
-          axios.interceptors.response.use(function() {
+          axios.interceptors.response.use(function () {
             throw Error('throwing interceptor');
           });
 
-          const unusedFulfillInterceptor = function() {};
-          const catchingThrowingInterceptor = function() {};
+          const unusedFulfillInterceptor = function () {};
+          const catchingThrowingInterceptor = function () {};
           axios.interceptors.response.use(unusedFulfillInterceptor, catchingThrowingInterceptor);
 
           const interceptor3 = jasmine.createSpy('interceptor3');

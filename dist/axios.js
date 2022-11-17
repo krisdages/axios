@@ -5,6 +5,297 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.axios = factory());
 })(this, (function () { 'use strict';
 
+  function _regeneratorRuntime() {
+    _regeneratorRuntime = function () {
+      return exports;
+    };
+    var exports = {},
+      Op = Object.prototype,
+      hasOwn = Op.hasOwnProperty,
+      $Symbol = "function" == typeof Symbol ? Symbol : {},
+      iteratorSymbol = $Symbol.iterator || "@@iterator",
+      asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator",
+      toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
+    function define(obj, key, value) {
+      return Object.defineProperty(obj, key, {
+        value: value,
+        enumerable: !0,
+        configurable: !0,
+        writable: !0
+      }), obj[key];
+    }
+    try {
+      define({}, "");
+    } catch (err) {
+      define = function (obj, key, value) {
+        return obj[key] = value;
+      };
+    }
+    function wrap(innerFn, outerFn, self, tryLocsList) {
+      var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator,
+        generator = Object.create(protoGenerator.prototype),
+        context = new Context(tryLocsList || []);
+      return generator._invoke = function (innerFn, self, context) {
+        var state = "suspendedStart";
+        return function (method, arg) {
+          if ("executing" === state) throw new Error("Generator is already running");
+          if ("completed" === state) {
+            if ("throw" === method) throw arg;
+            return doneResult();
+          }
+          for (context.method = method, context.arg = arg;;) {
+            var delegate = context.delegate;
+            if (delegate) {
+              var delegateResult = maybeInvokeDelegate(delegate, context);
+              if (delegateResult) {
+                if (delegateResult === ContinueSentinel) continue;
+                return delegateResult;
+              }
+            }
+            if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) {
+              if ("suspendedStart" === state) throw state = "completed", context.arg;
+              context.dispatchException(context.arg);
+            } else "return" === context.method && context.abrupt("return", context.arg);
+            state = "executing";
+            var record = tryCatch(innerFn, self, context);
+            if ("normal" === record.type) {
+              if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue;
+              return {
+                value: record.arg,
+                done: context.done
+              };
+            }
+            "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg);
+          }
+        };
+      }(innerFn, self, context), generator;
+    }
+    function tryCatch(fn, obj, arg) {
+      try {
+        return {
+          type: "normal",
+          arg: fn.call(obj, arg)
+        };
+      } catch (err) {
+        return {
+          type: "throw",
+          arg: err
+        };
+      }
+    }
+    exports.wrap = wrap;
+    var ContinueSentinel = {};
+    function Generator() {}
+    function GeneratorFunction() {}
+    function GeneratorFunctionPrototype() {}
+    var IteratorPrototype = {};
+    define(IteratorPrototype, iteratorSymbol, function () {
+      return this;
+    });
+    var getProto = Object.getPrototypeOf,
+      NativeIteratorPrototype = getProto && getProto(getProto(values([])));
+    NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype);
+    var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype);
+    function defineIteratorMethods(prototype) {
+      ["next", "throw", "return"].forEach(function (method) {
+        define(prototype, method, function (arg) {
+          return this._invoke(method, arg);
+        });
+      });
+    }
+    function AsyncIterator(generator, PromiseImpl) {
+      function invoke(method, arg, resolve, reject) {
+        var record = tryCatch(generator[method], generator, arg);
+        if ("throw" !== record.type) {
+          var result = record.arg,
+            value = result.value;
+          return value && "object" == typeof value && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) {
+            invoke("next", value, resolve, reject);
+          }, function (err) {
+            invoke("throw", err, resolve, reject);
+          }) : PromiseImpl.resolve(value).then(function (unwrapped) {
+            result.value = unwrapped, resolve(result);
+          }, function (error) {
+            return invoke("throw", error, resolve, reject);
+          });
+        }
+        reject(record.arg);
+      }
+      var previousPromise;
+      this._invoke = function (method, arg) {
+        function callInvokeWithMethodAndArg() {
+          return new PromiseImpl(function (resolve, reject) {
+            invoke(method, arg, resolve, reject);
+          });
+        }
+        return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg();
+      };
+    }
+    function maybeInvokeDelegate(delegate, context) {
+      var method = delegate.iterator[context.method];
+      if (undefined === method) {
+        if (context.delegate = null, "throw" === context.method) {
+          if (delegate.iterator.return && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method)) return ContinueSentinel;
+          context.method = "throw", context.arg = new TypeError("The iterator does not provide a 'throw' method");
+        }
+        return ContinueSentinel;
+      }
+      var record = tryCatch(method, delegate.iterator, context.arg);
+      if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel;
+      var info = record.arg;
+      return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel);
+    }
+    function pushTryEntry(locs) {
+      var entry = {
+        tryLoc: locs[0]
+      };
+      1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry);
+    }
+    function resetTryEntry(entry) {
+      var record = entry.completion || {};
+      record.type = "normal", delete record.arg, entry.completion = record;
+    }
+    function Context(tryLocsList) {
+      this.tryEntries = [{
+        tryLoc: "root"
+      }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0);
+    }
+    function values(iterable) {
+      if (iterable) {
+        var iteratorMethod = iterable[iteratorSymbol];
+        if (iteratorMethod) return iteratorMethod.call(iterable);
+        if ("function" == typeof iterable.next) return iterable;
+        if (!isNaN(iterable.length)) {
+          var i = -1,
+            next = function next() {
+              for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next;
+              return next.value = undefined, next.done = !0, next;
+            };
+          return next.next = next;
+        }
+      }
+      return {
+        next: doneResult
+      };
+    }
+    function doneResult() {
+      return {
+        value: undefined,
+        done: !0
+      };
+    }
+    return GeneratorFunction.prototype = GeneratorFunctionPrototype, define(Gp, "constructor", GeneratorFunctionPrototype), define(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) {
+      var ctor = "function" == typeof genFun && genFun.constructor;
+      return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name));
+    }, exports.mark = function (genFun) {
+      return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun;
+    }, exports.awrap = function (arg) {
+      return {
+        __await: arg
+      };
+    }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () {
+      return this;
+    }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) {
+      void 0 === PromiseImpl && (PromiseImpl = Promise);
+      var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl);
+      return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) {
+        return result.done ? result.value : iter.next();
+      });
+    }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () {
+      return this;
+    }), define(Gp, "toString", function () {
+      return "[object Generator]";
+    }), exports.keys = function (object) {
+      var keys = [];
+      for (var key in object) keys.push(key);
+      return keys.reverse(), function next() {
+        for (; keys.length;) {
+          var key = keys.pop();
+          if (key in object) return next.value = key, next.done = !1, next;
+        }
+        return next.done = !0, next;
+      };
+    }, exports.values = values, Context.prototype = {
+      constructor: Context,
+      reset: function (skipTempReset) {
+        if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined);
+      },
+      stop: function () {
+        this.done = !0;
+        var rootRecord = this.tryEntries[0].completion;
+        if ("throw" === rootRecord.type) throw rootRecord.arg;
+        return this.rval;
+      },
+      dispatchException: function (exception) {
+        if (this.done) throw exception;
+        var context = this;
+        function handle(loc, caught) {
+          return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught;
+        }
+        for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+          var entry = this.tryEntries[i],
+            record = entry.completion;
+          if ("root" === entry.tryLoc) return handle("end");
+          if (entry.tryLoc <= this.prev) {
+            var hasCatch = hasOwn.call(entry, "catchLoc"),
+              hasFinally = hasOwn.call(entry, "finallyLoc");
+            if (hasCatch && hasFinally) {
+              if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0);
+              if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc);
+            } else if (hasCatch) {
+              if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0);
+            } else {
+              if (!hasFinally) throw new Error("try statement without catch or finally");
+              if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc);
+            }
+          }
+        }
+      },
+      abrupt: function (type, arg) {
+        for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+          var entry = this.tryEntries[i];
+          if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) {
+            var finallyEntry = entry;
+            break;
+          }
+        }
+        finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null);
+        var record = finallyEntry ? finallyEntry.completion : {};
+        return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record);
+      },
+      complete: function (record, afterLoc) {
+        if ("throw" === record.type) throw record.arg;
+        return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel;
+      },
+      finish: function (finallyLoc) {
+        for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+          var entry = this.tryEntries[i];
+          if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel;
+        }
+      },
+      catch: function (tryLoc) {
+        for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+          var entry = this.tryEntries[i];
+          if (entry.tryLoc === tryLoc) {
+            var record = entry.completion;
+            if ("throw" === record.type) {
+              var thrown = record.arg;
+              resetTryEntry(entry);
+            }
+            return thrown;
+          }
+        }
+        throw new Error("illegal catch attempt");
+      },
+      delegateYield: function (iterable, resultName, nextLoc) {
+        return this.delegate = {
+          iterator: values(iterable),
+          resultName: resultName,
+          nextLoc: nextLoc
+        }, "next" === this.method && (this.arg = undefined), ContinueSentinel;
+      }
+    }, exports;
+  }
   function _typeof(obj) {
     "@babel/helpers - typeof";
 
@@ -13,6 +304,36 @@
     } : function (obj) {
       return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     }, _typeof(obj);
+  }
+  function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
+    try {
+      var info = gen[key](arg);
+      var value = info.value;
+    } catch (error) {
+      reject(error);
+      return;
+    }
+    if (info.done) {
+      resolve(value);
+    } else {
+      Promise.resolve(value).then(_next, _throw);
+    }
+  }
+  function _asyncToGenerator(fn) {
+    return function () {
+      var self = this,
+        args = arguments;
+      return new Promise(function (resolve, reject) {
+        var gen = fn.apply(self, args);
+        function _next(value) {
+          asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
+        }
+        function _throw(err) {
+          asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
+        }
+        _next(undefined);
+      });
+    };
   }
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -81,6 +402,57 @@
   }
   function _nonIterableRest() {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+  }
+  function _createForOfIteratorHelper(o, allowArrayLike) {
+    var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"];
+    if (!it) {
+      if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
+        if (it) o = it;
+        var i = 0;
+        var F = function () {};
+        return {
+          s: F,
+          n: function () {
+            if (i >= o.length) return {
+              done: true
+            };
+            return {
+              done: false,
+              value: o[i++]
+            };
+          },
+          e: function (e) {
+            throw e;
+          },
+          f: F
+        };
+      }
+      throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    }
+    var normalCompletion = true,
+      didErr = false,
+      err;
+    return {
+      s: function () {
+        it = it.call(o);
+      },
+      n: function () {
+        var step = it.next();
+        normalCompletion = step.done;
+        return step;
+      },
+      e: function (e) {
+        didErr = true;
+        err = e;
+      },
+      f: function () {
+        try {
+          if (!normalCompletion && it.return != null) it.return();
+        } finally {
+          if (didErr) throw err;
+        }
+      }
+    };
   }
 
   function bind(fn, thisArg) {
@@ -2002,9 +2374,320 @@
     });
   }
 
+  var noFetch = typeof fetch === "undefined";
+  function isNetworkError(err) {
+    if (err == null) return false;
+    try {
+      var message = err.message;
+      if (err.name === "TypeError") {
+        //Network error messages -
+        //Chrome: "Failed to fetch"
+        //Firefox: "NetworkError ..."
+        //TODO: Verify message for safari.
+        return message != null && (message.includes("fetch") || message.includes("NetworkError"));
+      }
+      //Edge (currently as of 2020 - doesn't throw TypeError despite that being in the spec.)
+      //If edge follows the spec, remove this.
+      else if (message === "Failed to fetch") {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+  function fetchAdapter(config) {
+    return new Promise(function dispatchFetchRequest(resolve, reject) {
+      if (noFetch) {
+        noFetch = typeof fetch === "undefined";
+        if (noFetch) {
+          reject(new AxiosError("window.fetch not available", "ERR_FETCH_UNAVAILABLE", config, null));
+          return;
+        }
+      }
+      var request;
+      var configSignal = config.signal;
+      var _configSignalOnAbortWithTimeout;
+      var cleanup = function cleanup() {
+        request = undefined;
+        if (configSignal && _configSignalOnAbortWithTimeout) {
+          configSignal.removeEventListener("abort", _configSignalOnAbortWithTimeout);
+        }
+      };
+      var requestData = config.data;
+      var requestHeaders = AxiosHeaders$1.from(config.headers).normalize();
+      if (utils.isFormData(requestData) && platform.isStandardBrowserEnv) {
+        requestHeaders.setContentType(false); // Let the browser set it
+      }
+
+      // HTTP basic authentication
+      if (config.auth) {
+        var username = config.auth.username || '';
+        var password = config.auth.password ? unescape(encodeURIComponent(config.auth.password)) : '';
+        requestHeaders.set('Authorization', 'Basic ' + btoa(username + ':' + password));
+      }
+      var fullPath = buildFullPath(config.baseURL, config.url);
+      var protocol = parseProtocol(fullPath);
+      if (protocol && platform.protocols.indexOf(protocol) === -1) {
+        reject(new AxiosError('Unsupported protocol ' + protocol + ':', AxiosError.ERR_BAD_REQUEST, config));
+        return;
+      }
+      var url = buildURL(fullPath, config.params, config.paramsSerializer);
+      var data;
+      var dataError = false;
+      var timing = {},
+        perf;
+      var responseType = config.responseType;
+      if (!responseType) {
+        responseType = "text";
+      } else if (responseType.toLowerCase() === "arraybuffer") {
+        responseType = "arrayBuffer";
+      }
+      if (config.performance) {
+        if (config.performance === true) {
+          if (typeof performance !== "undefined") {
+            perf = performance;
+          }
+        } else {
+          perf = config.performance;
+        }
+      }
+
+      // Handle the response
+      function handleLoad(_x) {
+        return _handleLoad.apply(this, arguments);
+      } // Wrap low level network errors or trigger reject for non-network errors.
+      // Promise rejection handler for fetch() and called with rawResponse when error thrown awaiting response data
+      function _handleLoad() {
+        _handleLoad = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(response) {
+          var responseHeaders, _iterator, _step, _step$value, key, val, axiosResponse;
+          return _regeneratorRuntime().wrap(function _callee$(_context) {
+            while (1) {
+              switch (_context.prev = _context.next) {
+                case 0:
+                  _context.prev = 0;
+                  // Prepare the response
+                  responseHeaders = new AxiosHeaders$1();
+                  if (response.headers) {
+                    _iterator = _createForOfIteratorHelper(response.headers);
+                    try {
+                      for (_iterator.s(); !(_step = _iterator.n()).done;) {
+                        _step$value = _slicedToArray(_step.value, 2), key = _step$value[0], val = _step$value[1];
+                        responseHeaders.set(key, val);
+                      }
+                    } catch (err) {
+                      _iterator.e(err);
+                    } finally {
+                      _iterator.f();
+                    }
+                  }
+                  if (!(responseType === "none")) {
+                    _context.next = 8;
+                    break;
+                  }
+                  data = undefined;
+                  perf = undefined;
+                  _context.next = 36;
+                  break;
+                case 8:
+                  if (!(responseType === "stream")) {
+                    _context.next = 13;
+                    break;
+                  }
+                  if (perf) {
+                    timing.responseStart = perf.now();
+                  }
+                  data = response.body;
+                  // if (streamCancelTransformer != null) {
+                  // 	data = data.pipeThrough(new TransformStream(streamCancelTransformer));
+                  // }
+                  _context.next = 36;
+                  break;
+                case 13:
+                  if (!(typeof response[responseType] === "function")) {
+                    _context.next = 34;
+                    break;
+                  }
+                  _context.prev = 14;
+                  if (!perf) {
+                    _context.next = 23;
+                    break;
+                  }
+                  timing.responseStart = perf.now();
+                  _context.next = 19;
+                  return response[responseType]();
+                case 19:
+                  data = _context.sent;
+                  timing.responseEnd = perf.now();
+                  _context.next = 26;
+                  break;
+                case 23:
+                  _context.next = 25;
+                  return response[responseType]();
+                case 25:
+                  data = _context.sent;
+                case 26:
+                  _context.next = 32;
+                  break;
+                case 28:
+                  _context.prev = 28;
+                  _context.t0 = _context["catch"](14);
+                  handleError(_context.t0, response);
+                  return _context.abrupt("return");
+                case 32:
+                  _context.next = 36;
+                  break;
+                case 34:
+                  dataError = true;
+                  perf = undefined;
+                case 36:
+                  axiosResponse = {
+                    data: data,
+                    status: response.status,
+                    statusText: response.statusText,
+                    headers: responseHeaders,
+                    config: config,
+                    request: request,
+                    response: response
+                  };
+                  if (perf) {
+                    axiosResponse.timing = timing;
+                  }
+                  if (dataError) {
+                    reject(new AxiosError('Unknown responseType ' + responseType, "ERR_UNKNOWN_RESPONSE_TYPE", config, request, axiosResponse));
+                  }
+                  settle(resolve, reject, axiosResponse);
+                case 40:
+                  _context.prev = 40;
+                  // Clean up request
+                  cleanup();
+                  return _context.finish(40);
+                case 43:
+                case "end":
+                  return _context.stop();
+              }
+            }
+          }, _callee, null, [[0,, 40, 43], [14, 28]]);
+        }));
+        return _handleLoad.apply(this, arguments);
+      }
+      function handleError(thrown, rawResponse) {
+        try {
+          if (thrown instanceof DOMException && thrown.name === "AbortError") {
+            var err = new CanceledError(typeof thrown.reason === "string" ? thrown.reason : null, config, request);
+            err.response = rawResponse;
+            err.abortError = thrown;
+            reject(err);
+          } else if (isNetworkError(thrown)) {
+            var _err = new AxiosError('Network Error', AxiosError.ERR_NETWORK, config, request, rawResponse);
+            _err.cause = thrown;
+            reject(_err);
+          } else {
+            reject(AxiosError.from(thrown, thrown.name === "SyntaxError" ? AxiosError.ERR_BAD_RESPONSE : null, config, request, rawResponse));
+          }
+        } finally {
+          // Clean up request
+          cleanup();
+        }
+      }
+      var requestInit = {
+        method: config.method.toUpperCase()
+      };
+
+      // Add xsrf header
+      // This is only done if running in a standard browser environment.
+      // Specifically not if we're in a web worker, or react-native.
+      if (platform.isStandardBrowserEnv) {
+        // Add xsrf header
+        var xsrfValue = (config.withCredentials || isURLSameOrigin(fullPath)) && config.xsrfCookieName && cookies.read(config.xsrfCookieName);
+        if (xsrfValue) {
+          requestHeaders.set(config.xsrfHeaderName, xsrfValue);
+        }
+      }
+      if (requestData !== undefined) {
+        requestInit.body = requestData;
+      } else {
+        // Remove Content-Type if data is undefined
+        requestHeaders.setContentType(null);
+      }
+
+      // Add headers to the request
+      var headers = new Headers();
+      utils.forEach(requestHeaders.toJSON(), function setRequestHeader(val, key) {
+        headers.set(key, val);
+      });
+      requestInit.headers = headers;
+
+      // Add withCredentials to request if needed
+      if (!utils.isUndefined(config.withCredentials)) {
+        requestInit.withCredentials = !!config.withCredentials;
+      }
+      requestInit.signal = configSignal;
+      var hasTimeout = typeof config.timeout === "number" && config.timeout > 0;
+      var fetchFinally;
+      var timeoutHandle;
+      if (hasTimeout) {
+        var abort = function abort(rejection) {
+          var req = request;
+          // Clean up request
+          cleanup();
+          try {
+            if (signal.aborted) return;
+          } catch (e) {
+          }
+          if (rejection === "timeout") {
+            var timeoutErrorMessage = 'timeout of ' + config.timeout + 'ms exceeded';
+            var transitional = config.transitional || transitionalDefaults;
+            if (config.timeoutErrorMessage) {
+              timeoutErrorMessage = config.timeoutErrorMessage;
+            }
+            rejection = new AxiosError(timeoutErrorMessage, transitional.clarifyTimeoutError ? AxiosError.ETIMEDOUT : AxiosError.ECONNABORTED, config, req);
+          }
+          reject(rejection);
+          abortController.abort();
+        };
+
+        // Handle cancellation
+        var abortController = new AbortController();
+        var signal = requestInit.signal = abortController.signal;
+        timeoutHandle = setTimeout(function () {
+          abort("timeout");
+        }, config.timeout);
+        fetchFinally = function fetchFinally() {
+          if (timeoutHandle !== undefined) {
+            try {
+              clearTimeout(timeoutHandle);
+            } catch (e) {
+            }
+          }
+        };
+
+        //A separate AbortSignal is used for the timeout so that the timeout only applies to the receipt of the response.
+        // A response stream may be consumed after the timeout.
+        //An external AbortSignal passed in the config object will abort the entire request,
+        // including any response stream in progress.
+        if (configSignal) {
+          _configSignalOnAbortWithTimeout = function configSignalOnAbortWithTimeout() {
+            _configSignalOnAbortWithTimeout = undefined;
+            abort(configSignal.reason);
+          };
+          configSignal.addEventListener("abort", _configSignalOnAbortWithTimeout, ONCE);
+        }
+      }
+
+      // Send the request
+      request = new Request(url.toString(), requestInit);
+      fetch(request)["finally"](fetchFinally).then(handleLoad, handleError);
+    });
+  }
+  var ONCE = Object.freeze({
+    once: true
+  });
+
   var adapters = {
     http: xhrAdapter,
-    xhr: xhrAdapter
+    xhr: xhrAdapter,
+    fetch: fetchAdapter
   };
   var adapters$1 = {
     getAdapter: function getAdapter(nameOrAdapter) {
@@ -2071,6 +2754,7 @@
   var defaults = {
     transitional: transitionalDefaults,
     adapter: getDefaultAdapter(),
+    allAdapters: adapters$1.adapters,
     transformRequest: [function transformRequest(data, headers) {
       var contentType = headers.getContentType() || '';
       var hasJSONContentType = contentType.indexOf('application/json') > -1;
