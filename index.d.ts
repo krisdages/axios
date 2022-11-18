@@ -494,6 +494,8 @@ export function isCancel(value: any): value is Cancel;
 
 export function all<T>(values: Array<T | Promise<T>>): Promise<T[]>;
 
+export let defaults: AxiosInstance["defaults"];
+
 export interface AxiosStatic extends AxiosInstance {
   create(config?: CreateAxiosDefaults): AxiosInstance;
   Cancel: CancelStatic;

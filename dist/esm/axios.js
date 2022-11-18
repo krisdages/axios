@@ -2479,7 +2479,7 @@ function stringifySafely(rawValue, parser, encoder) {
   return (encoder || JSON.stringify)(rawValue);
 }
 
-const defaults = {
+const defaults$1 = {
 
   transitional: transitionalDefaults,
 
@@ -2548,7 +2548,7 @@ const defaults = {
   }],
 
   transformResponse: [function transformResponse(data) {
-    const transitional = this.transitional || defaults.transitional;
+    const transitional = this.transitional || defaults$1.transitional;
     const forcedJSONParsing = transitional && transitional.forcedJSONParsing;
     const JSONRequested = this.responseType === 'json';
 
@@ -2600,14 +2600,14 @@ const defaults = {
 };
 
 utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
-  defaults.headers[method] = {};
+  defaults$1.headers[method] = {};
 });
 
 utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
-  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
+  defaults$1.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
 });
 
-const defaults$1 = defaults;
+const defaults$2 = defaults$1;
 
 /**
  * Transform the data for a request or a response
@@ -2618,7 +2618,7 @@ const defaults$1 = defaults;
  * @returns {*} The resulting transformed data
  */
 function transformData(fns, response) {
-  const config = this || defaults$1;
+  const config = this || defaults$2;
   const context = response || config;
   const headers = AxiosHeaders$2.from(context.headers);
   let data = context.data;
@@ -2675,7 +2675,7 @@ function dispatchRequest(config) {
     config.headers.setContentType('application/x-www-form-urlencoded', false);
   }
 
-  const adapter = config.adapter || defaults$1.adapter;
+  const adapter = config.adapter || defaults$2.adapter;
 
   return adapter(config).then(function onAdapterResolution(response) {
     throwIfCancellationRequested(config);
@@ -3268,7 +3268,7 @@ function createInstance(defaultConfig) {
 }
 
 // Create the default instance to be exported
-const axios = createInstance(defaults$1);
+const axios = createInstance(defaults$2);
 
 // Expose Axios class to allow class inheritance
 axios.Axios = Axios$2;
@@ -3324,5 +3324,12 @@ const {
   formToJSON
 } = axios$1;
 
-export { Axios, AxiosError, AxiosHeaders, Cancel, CancelToken, CanceledError, VERSION, all, axios$1 as default, formToJSON, isAxiosError, isCancel, spread, toFormData };
+let defaults = axios$1.defaults;
+Object.defineProperty(
+    axios$1,
+    "defaults",
+    { enumerable: true, get() { return defaults; }, set(v) { defaults = v; } }
+);
+
+export { Axios, AxiosError, AxiosHeaders, Cancel, CancelToken, CanceledError, VERSION, all, axios$1 as default, defaults, formToJSON, isAxiosError, isCancel, spread, toFormData };
 //# sourceMappingURL=axios.js.map

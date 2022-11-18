@@ -16,7 +16,7 @@ const exec = util.promisify(cp.exec);
 
 const {Axios} = axiosFactory;
 
-const ignoreList = ['default'];
+const ignoreList = ['default', 'defaults'];
 
 const instance = axiosFactory.create({});
 

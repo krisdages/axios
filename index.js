@@ -19,6 +19,13 @@ const {
   formToJSON
 } = axios;
 
+export let defaults = axios.defaults;
+Object.defineProperty(
+    axios,
+    "defaults",
+    { enumerable: true, get() { return defaults; }, set(v) { defaults = v; } }
+);
+
 export {
   axios as default,
   Axios,
