@@ -1,3 +1,9 @@
+### @krisdages/axios
+
+This is an unsupported fork of axios that adds an optional native `fetch` adapter.
+It is exposed as `axios.defaults.allAdapters.fetch`.~~~~~~~~
+
+---
 <h1 align="center">
    <b>
         <a href="https://axios-http.com"><img src="https://axios-http.com/assets/logo.svg" /></a><br>
